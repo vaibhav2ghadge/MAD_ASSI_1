@@ -170,6 +170,7 @@ func (r *MongoRepository) FindByTypeOfPostCode(postCode string ) ([]*domain.Rest
 		return nil, err
 	}
 }
+//print restaurant
 func PrintRestaurant(r []*domain.Restaurant){
      for _,obj:=range r {
                       fmt.Println(obj)
