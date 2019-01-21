@@ -7,6 +7,7 @@ import (
 	dbrepo "./dbrepository"
 	mongoutils "./utils"
 	domain "./domain"
+
 )
 
 func main() {
@@ -30,27 +31,23 @@ for _,obj:=range xx {
 			fmt.Println(obj,yy)
 	}
 //third assignment
-
+xc,mc := repoaccess.FindByName("pizza")
+fmt.Println(xc,mc,id)
+dbrepo.PrintRestaurant(xc)
 cmdArgument := os.Args[1:]
 if len(cmdArgument)>0 {
 	if strings.Contains(cmdArgument[0],"find") {
 			cmdArgument = strings.SplitAfter(cmdArgument[1],"=")
 			if strings.Contains(cmdArgument[0],"--type_of_food") {
 				fmt.Println("Types Of Food")
-				rest,err := repoaccess.FindByTypeOfFood(cmdArgument[1])
-				for _,obj:=range rest {
-					fmt.Println(obj,err)
-				}
-				fmt.Println("invalid1")
+				rest,_ := repoaccess.FindByTypeOfFood(cmdArgument[1])
+				dbrepo.PrintRestaurant(rest) //print the restarant
 			} else if strings.Contains(cmdArgument[0],"--postcode") && len(cmdArgument)==2{
 				fmt.Println("argument",cmdArgument,cmdArgument[1])
-				rest,err := repoaccess.FindByTypeOfPostCode(cmdArgument[1])
-				for _,obj:=range rest {
-					fmt.Println(obj)
-				}
-				fmt.Println("invalid3",err)
+				rest,_ := repoaccess.FindByTypeOfPostCode(cmdArgument[1])
+				dbrepo.PrintRestaurant(rest) //print the restarant
 			} else {
-				fmt.Println("invalid")
+				fmt.Println("invalid argument with --type_of_food")
 			}//count number of restuarnt in give food type
 	} else if strings.Contains(cmdArgument[0],"count") {
 			cmdArgument = strings.SplitAfter(cmdArgument[1],"=")
