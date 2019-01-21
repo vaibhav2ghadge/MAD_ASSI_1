@@ -62,7 +62,7 @@ func (r *MongoRepository) FindByName(name string)([]*domain.Restaurant,error){
 	defer session.Close()
 	coll := session.DB(r.db).C(collectionName)
 	result := []*domain.Restaurant{}
-	name = "/"+name+"/"
+//	name = "/"+name+"/"
 	err := coll.Find(bson.M{"name":bson.RegEx{name,"i"}}).All(&result)
 	//return result,err
 	if err != nil {
@@ -70,6 +70,25 @@ func (r *MongoRepository) FindByName(name string)([]*domain.Restaurant,error){
 	}
 	return result,nil
 }
+
+//search in allfield
+func (r *MongoRepository) Search(query string)([]*domain.Restaurant,error){
+	session := r.mongoSession.Clone()
+	defer session.Close()
+	coll := session.DB(r.db).C(collectionName)
+	result := []*domain.Restaurant{}
+//	name = "/"+name+"/"
+err := coll.Find(bson.M{"$or":[]bson.M{bson.M{"name":bson.RegEx{query,"i"}},bson.M{"address":bson.RegEx{query,"i"}},bson.M{"addressLine2":bson.RegEx{query,"i"}},bson.M{"url":bson.RegEx{query,"i"}},bson.M{"outcode":bson.RegEx{query,"i"}},bson.M{"postcode":bson.RegEx{query,"i"}},bson.M{"type_of_food":bson.RegEx{query,"i"}}}}).All(&result)
+	//return result,err
+	if err != nil {
+		return result, err
+	}
+	return result,nil
+}
+
+
+
+
 //Store a Restaurantrecord
 func (r *MongoRepository) Store(b *domain.Restaurant) (domain.ID, error) {
 	session := r.mongoSession.Clone()
@@ -151,7 +170,7 @@ func (r *MongoRepository) FindByTypeOfPostCode(postCode string ) ([]*domain.Rest
 		return nil, err
 	}
 }
-func PrintRestaurant(r []domain.Restaurant){
+func PrintRestaurant(r []*domain.Restaurant){
      for _,obj:=range r {
                       fmt.Println(obj)
   }
