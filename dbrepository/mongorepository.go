@@ -2,7 +2,7 @@ package dbrepository
 
 import (
 	"fmt"
-	"../domain"
+	domain "../domain"
 	mgo "gopkg.in/mgo.v2"
 	bson "gopkg.in/mgo.v2/bson"
 )
@@ -73,7 +73,16 @@ func (r *MongoRepository) Store(b *domain.Restaurant) (domain.ID, error) {
 	}
 	return b.DBID, nil
 }
+//delete document from mongodb by id
 
+func (r *MongoRepository) Delete(id domain.ID) error{
+	session := r.mongoSession.Clone()
+	defer session.Close()
+	coll := session.DB(r.db).C(collectionName)
+	err := coll.remove(bson.M{"_id":id})
+	return err
+
+}	
 func (r *MongoRepository) CountByTypeOfFood(foodType string) (int,error){
 	session := r.mongoSession.Clone()
 	defer session.Close()
