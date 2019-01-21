@@ -56,7 +56,20 @@ func (r *MongoRepository) GetAll() ([]*domain.Restaurant, error) {
 		return nil, err
 	}
 }
-
+// find by name substring case insentive
+func (r *MongoRepository) FindByName(name string)([]*domain.Restaurant,error){
+	session := r.mongoSession.Clone()
+	defer session.Close()
+	coll := session.DB(r.db).C(collectionName)
+	result := []*domain.Restaurant{}
+	name = "/"+name+"/"
+	err := coll.Find(bson.M{"name":bson.RegEx{name,"i"}}).All(&result)
+	//return result,err
+	if err != nil {
+		return result, err
+	}
+	return result,nil
+}
 //Store a Restaurantrecord
 func (r *MongoRepository) Store(b *domain.Restaurant) (domain.ID, error) {
 	session := r.mongoSession.Clone()
@@ -79,7 +92,7 @@ func (r *MongoRepository) Delete(id domain.ID) error{
 	session := r.mongoSession.Clone()
 	defer session.Close()
 	coll := session.DB(r.db).C(collectionName)
-	err := coll.remove(bson.M{"_id":id})
+	err := coll.Remove(bson.M{"_id":id})
 	return err
 
 }	
@@ -138,3 +151,9 @@ func (r *MongoRepository) FindByTypeOfPostCode(postCode string ) ([]*domain.Rest
 		return nil, err
 	}
 }
+func PrintRestaurant(r []domain.Restaurant){
+     for _,obj:=range r {
+                      fmt.Println(obj)
+  }
+  }
+
