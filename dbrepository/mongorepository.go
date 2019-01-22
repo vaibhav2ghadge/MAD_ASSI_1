@@ -1,10 +1,14 @@
 package dbrepository
 
 import (
+	"os"
+	"bufio"
+    "log"
 	"fmt"
 	domain "../domain"
 	mgo "gopkg.in/mgo.v2"
 	bson "gopkg.in/mgo.v2/bson"
+	"encoding/json"
 )
 
 //MongoRepository mongodb repo
@@ -174,6 +178,30 @@ func (r *MongoRepository) FindByTypeOfPostCode(postCode string ) ([]*domain.Rest
 func PrintRestaurant(r []*domain.Restaurant){
      for _,obj:=range r {
                       fmt.Println(obj)
+  	}
   }
-  }
+func (r *MongoRepository) MarshalingFileData(filePath string ) int {
 
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	var cnt int
+	var data domain.Restaurant
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		p := []byte(scanner.Text())
+		json.Unmarshal(p, &data)
+	
+		data.DBID =domain.NewID()
+		did,_ := r.Store(&data)
+		if did== domain.ID(0){
+	   		fmt.Println("Error in Insert")
+	   		break
+   		} else {
+	   		cnt = cnt+1
+   		}
+	}
+	return cnt
+}

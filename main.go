@@ -6,8 +6,6 @@ import (
 	"strings"
 	dbrepo "./dbrepository"
 	mongoutils "./utils"
-	domain "./domain"
-
 )
 
 func main() {
@@ -18,22 +16,11 @@ func main() {
 	repoaccess := dbrepo.NewMongoRepository(mongoSession, dbname)
 	fmt.Println(repoaccess)
 	//Run sample commands
-
-
-//second assign
-var id domain.ID;
-id = "5c45653b79492b6216397592"
-x,y:=repoaccess.Get(id)
-fmt.Println("get",x,y)
-xx,yy:=repoaccess.GetAll()
-fmt.Println("getAll",xx,yy)
-for _,obj:=range xx {
-			fmt.Println(obj,yy)
-	}
+	//first task
+	totalRecord := repoaccess.MarshalingFileData("./restaurant.json")
+	fmt.Println("total inserted",totalRecord)
 //third assignment
-xc,mc := repoaccess.FindByName("pizza")
-fmt.Println(xc,mc,id)
-dbrepo.PrintRestaurant(xc)
+
 cmdArgument := os.Args[1:]
 if len(cmdArgument)>0 {
 	if strings.Contains(cmdArgument[0],"find") {
